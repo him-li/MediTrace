@@ -2,7 +2,9 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var store: MedicationStore
+    @Environment(\.scenePhase) private var scenePhase
     @State private var showingAddMedication = false
+    @State private var requiredDoseMedication: Medication?
 
     var body: some View {
         NavigationStack {
@@ -45,7 +47,26 @@ struct ContentView: View {
             .sheet(isPresented: $showingAddMedication) {
                 AddMedicationView()
             }
+            .fullScreenCover(item: $requiredDoseMedication) { medication in
+                AddDoseView(medication: medication, isRequired: true) {
+                    requiredDoseMedication = nil
+                }
+                .interactiveDismissDisabled()
+            }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { consumePendingDoseRequest() }
+            }
+            .onAppear { consumePendingDoseRequest() }
         }
+    }
+
+    private func consumePendingDoseRequest() {
+        let defaults = UserDefaults.standard
+        guard let value = defaults.string(forKey: MedicationAlarmScheduler.pendingMedicationKey),
+              let id = UUID(uuidString: value),
+              let medication = store.medication(id: id) else { return }
+        defaults.removeObject(forKey: MedicationAlarmScheduler.pendingMedicationKey)
+        requiredDoseMedication = medication
     }
 }
 

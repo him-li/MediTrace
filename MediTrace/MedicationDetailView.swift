@@ -7,6 +7,7 @@ struct MedicationDetailView: View {
 
     @State private var now = Date()
     @State private var showingDoseSheet = false
+    @State private var showingReminders = false
 
     private var medicationDoses: [DoseEvent] { store.doses(for: medication) }
     private var currentAmount: Double {
@@ -98,7 +99,8 @@ struct MedicationDetailView: View {
         }
         .navigationTitle(medication.name)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button("用药提醒", systemImage: "alarm") { showingReminders = true }
                 Button("记录服用", systemImage: "plus.circle.fill") { showingDoseSheet = true }
             }
         }
@@ -118,6 +120,9 @@ struct MedicationDetailView: View {
         .sheet(isPresented: $showingDoseSheet) {
             AddDoseView(medication: medication) { now = .now }
         }
+        .sheet(isPresented: $showingReminders) {
+            ReminderListView(medication: medication)
+        }
         .task {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(60))
@@ -127,17 +132,19 @@ struct MedicationDetailView: View {
     }
 }
 
-private struct AddDoseView: View {
+struct AddDoseView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: MedicationStore
     let medication: Medication
     let onSave: () -> Void
+    var isRequired = false
 
     @State private var amount: Double
     @State private var date = Date()
 
-    init(medication: Medication, onSave: @escaping () -> Void) {
+    init(medication: Medication, isRequired: Bool = false, onSave: @escaping () -> Void) {
         self.medication = medication
+        self.isRequired = isRequired
         self.onSave = onSave
         _amount = State(initialValue: medication.defaultDose)
     }
@@ -157,8 +164,10 @@ private struct AddDoseView: View {
             .navigationTitle("记录服用")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                if !isRequired {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("取消") { dismiss() }
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存") {

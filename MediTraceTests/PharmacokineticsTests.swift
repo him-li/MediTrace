@@ -77,4 +77,23 @@ final class PharmacokineticsTests: XCTestCase {
             accuracy: 0.0001
         )
     }
+
+    func testPredictsWhenAmountFallsBelowThreshold() {
+        let start = Date(timeIntervalSince1970: 1_000_000)
+        let medication = Medication(
+            name: "Test", defaultDose: 100, unit: "mg",
+            halfLifeHours: 8, timeToPeakHours: 2
+        )
+        let dose = DoseEvent(medicationID: medication.id, amount: 100, takenAt: start)
+
+        let result = Pharmacokinetics.firstDateBelow(
+            50,
+            medication: medication,
+            doses: [dose],
+            now: start
+        )
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result!.timeIntervalSince(start), 10 * 3_600, accuracy: 2)
+    }
 }

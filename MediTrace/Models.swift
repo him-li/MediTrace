@@ -50,6 +50,21 @@ struct DoseEvent: Identifiable, Codable, Hashable {
     var takenAt: Date
 }
 
+struct MedicationReminder: Identifiable, Codable, Hashable {
+    enum Trigger: Codable, Hashable {
+        case afterDuration(hours: Double)
+        case belowAmount(Double)
+    }
+
+    var id = UUID()
+    var medicationID: UUID
+    var trigger: Trigger
+    var snoozeMinutes: Double
+    var alarmID: UUID?
+    var nextFireDate: Date?
+    var isEnabled = true
+}
+
 struct ConcentrationPoint: Identifiable {
     let date: Date
     let amount: Double
@@ -104,5 +119,48 @@ enum Pharmacokinetics {
                 amount: remainingAmount(at: date, medication: medication, doses: doses)
             )
         }
+    }
+
+    static func firstDateBelow(
+        _ threshold: Double,
+        medication: Medication,
+        doses: [DoseEvent],
+        now: Date = .now
+    ) -> Date? {
+        let relevantDoses = doses.filter { $0.medicationID == medication.id && $0.takenAt <= now }
+        guard !relevantDoses.isEmpty, threshold >= 0 else { return nil }
+
+        let latestPeak = relevantDoses.map {
+            $0.takenAt.addingTimeInterval(medication.timeToPeakHours * 3_600)
+        }.max() ?? now
+        var previousDate = max(now, latestPeak)
+        var previousAmount = remainingAmount(at: previousDate, medication: medication, doses: relevantDoses)
+
+        if previousAmount <= threshold { return now.addingTimeInterval(60) }
+
+        let searchEnd = previousDate.addingTimeInterval(max(24, medication.halfLifeHours * 20) * 3_600)
+        let step: TimeInterval = 15 * 60
+        var date = previousDate.addingTimeInterval(step)
+
+        while date <= searchEnd {
+            let amount = remainingAmount(at: date, medication: medication, doses: relevantDoses)
+            if amount <= threshold {
+                var low = previousDate
+                var high = date
+                for _ in 0..<20 {
+                    let middle = low.addingTimeInterval(high.timeIntervalSince(low) / 2)
+                    if remainingAmount(at: middle, medication: medication, doses: relevantDoses) > threshold {
+                        low = middle
+                    } else {
+                        high = middle
+                    }
+                }
+                return high
+            }
+            previousDate = date
+            previousAmount = amount
+            date = date.addingTimeInterval(step)
+        }
+        return nil
     }
 }
