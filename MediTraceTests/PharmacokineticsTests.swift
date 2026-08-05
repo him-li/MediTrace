@@ -43,4 +43,38 @@ final class PharmacokineticsTests: XCTestCase {
             0
         )
     }
+
+    func testDoseRisesDuringAbsorptionAndPeaksAtTMax() {
+        let start = Date(timeIntervalSince1970: 1_000_000)
+        let medication = Medication(
+            name: "Test",
+            defaultDose: 100,
+            unit: "mg",
+            halfLifeHours: 8,
+            timeToPeakHours: 2
+        )
+        let dose = DoseEvent(medicationID: medication.id, amount: 100, takenAt: start)
+
+        XCTAssertEqual(
+            Pharmacokinetics.remainingAmount(
+                at: start.addingTimeInterval(3_600), medication: medication, doses: [dose]
+            ),
+            50,
+            accuracy: 0.0001
+        )
+        XCTAssertEqual(
+            Pharmacokinetics.remainingAmount(
+                at: start.addingTimeInterval(2 * 3_600), medication: medication, doses: [dose]
+            ),
+            100,
+            accuracy: 0.0001
+        )
+        XCTAssertEqual(
+            Pharmacokinetics.remainingAmount(
+                at: start.addingTimeInterval(10 * 3_600), medication: medication, doses: [dose]
+            ),
+            50,
+            accuracy: 0.0001
+        )
+    }
 }

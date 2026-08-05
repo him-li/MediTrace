@@ -17,12 +17,19 @@ final class MedicationStore: ObservableObject {
         load()
     }
 
-    func addMedication(name: String, dose: Double, unit: String, halfLifeHours: Double) {
+    func addMedication(
+        name: String,
+        dose: Double,
+        unit: String,
+        halfLifeHours: Double,
+        timeToPeakHours: Double
+    ) {
         medications.append(Medication(
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             defaultDose: dose,
             unit: unit.trimmingCharacters(in: .whitespacesAndNewlines),
-            halfLifeHours: halfLifeHours
+            halfLifeHours: halfLifeHours,
+            timeToPeakHours: timeToPeakHours
         ))
         save()
     }

@@ -6,7 +6,41 @@ struct Medication: Identifiable, Codable, Hashable {
     var defaultDose: Double
     var unit: String
     var halfLifeHours: Double
+    var timeToPeakHours: Double
     var createdAt = Date()
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        defaultDose: Double,
+        unit: String,
+        halfLifeHours: Double,
+        timeToPeakHours: Double = 0,
+        createdAt: Date = Date()
+    ) {
+        self.id = id
+        self.name = name
+        self.defaultDose = defaultDose
+        self.unit = unit
+        self.halfLifeHours = halfLifeHours
+        self.timeToPeakHours = timeToPeakHours
+        self.createdAt = createdAt
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, defaultDose, unit, halfLifeHours, timeToPeakHours, createdAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        defaultDose = try container.decode(Double.self, forKey: .defaultDose)
+        unit = try container.decode(String.self, forKey: .unit)
+        halfLifeHours = try container.decode(Double.self, forKey: .halfLifeHours)
+        timeToPeakHours = try container.decodeIfPresent(Double.self, forKey: .timeToPeakHours) ?? 0
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+    }
 }
 
 struct DoseEvent: Identifiable, Codable, Hashable {
@@ -34,7 +68,18 @@ enum Pharmacokinetics {
             .filter { $0.medicationID == medication.id && $0.takenAt <= date }
             .reduce(0) { total, dose in
                 let elapsedHours = date.timeIntervalSince(dose.takenAt) / 3_600
-                return total + dose.amount * pow(0.5, elapsedHours / medication.halfLifeHours)
+                let timeToPeak = max(0, medication.timeToPeakHours)
+                let remaining: Double
+
+                if timeToPeak > 0, elapsedHours < timeToPeak {
+                    // A deliberately simple absorption phase: estimated systemic amount
+                    // rises linearly until Tmax, then elimination begins from the peak.
+                    remaining = dose.amount * elapsedHours / timeToPeak
+                } else {
+                    let eliminationHours = max(0, elapsedHours - timeToPeak)
+                    remaining = dose.amount * pow(0.5, eliminationHours / medication.halfLifeHours)
+                }
+                return total + remaining
             }
     }
 

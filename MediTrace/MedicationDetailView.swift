@@ -61,7 +61,7 @@ struct MedicationDetailView: View {
                         }
                     }
                     .frame(height: 240)
-                    Text("按半衰期 \(medication.halfLifeHours.formatted()) 小时计算；每次补服都会叠加。")
+                    Text("约 \(medication.timeToPeakHours.formatted()) 小时达到峰值，之后按 \(medication.halfLifeHours.formatted()) 小时半衰期计算；每次补服都会叠加。")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

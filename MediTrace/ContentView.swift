@@ -61,7 +61,7 @@ private struct MedicationRow: View {
                 .background(.tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
             VStack(alignment: .leading, spacing: 3) {
                 Text(medication.name).font(.headline)
-                Text("常用剂量 \(medication.defaultDose.formatted()) \(medication.unit) · 半衰期 \(medication.halfLifeHours.formatted()) 小时")
+                Text("常用剂量 \(medication.defaultDose.formatted()) \(medication.unit) · 半衰期 \(medication.halfLifeHours.formatted()) 小时 · 峰值 \(medication.timeToPeakHours.formatted()) 小时")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

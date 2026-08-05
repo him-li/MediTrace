@@ -7,11 +7,12 @@ struct AddMedicationView: View {
     @State private var dose = 100.0
     @State private var unit = "mg"
     @State private var halfLife = 8.0
+    @State private var timeToPeak = 2.0
 
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         !unit.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        dose > 0 && halfLife > 0
+        dose > 0 && halfLife > 0 && timeToPeak >= 0
     }
 
     var body: some View {
@@ -36,10 +37,18 @@ struct AddMedicationView: View {
                             .multilineTextAlignment(.trailing)
                         Text("小时").foregroundStyle(.secondary)
                     }
+                    HStack {
+                        Text("达到峰值时间")
+                        Spacer()
+                        TextField("小时", value: $timeToPeak, format: .number)
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                        Text("小时").foregroundStyle(.secondary)
+                    }
                 } header: {
                     Text("药代参数")
                 } footer: {
-                    Text("请从药品说明书或医生处确认半衰期。不同个体的实际情况可能有明显差异。")
+                    Text("达到峰值时间指服药后达到最高估算水平所需的时间。请从药品说明书或医生处确认参数。")
                 }
             }
             .navigationTitle("添加药物")
@@ -50,7 +59,13 @@ struct AddMedicationView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存") {
-                        store.addMedication(name: name, dose: dose, unit: unit, halfLifeHours: halfLife)
+                        store.addMedication(
+                            name: name,
+                            dose: dose,
+                            unit: unit,
+                            halfLifeHours: halfLife,
+                            timeToPeakHours: timeToPeak
+                        )
                         dismiss()
                     }
                     .disabled(!isValid)
