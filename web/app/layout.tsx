@@ -3,24 +3,30 @@ import { Metadata, Viewport } from "next";
 
 import { Providers } from "./providers";
 
-import { siteConfig } from "@/config/site";
-import { Navbar } from "@/components/navbar";
-
 export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: "MediTrace — Medication level tracker",
+  description: "Record medication doses, estimate levels over time, and create reminders.",
   icons: {
     icon: "/favicon.ico",
+  },
+  openGraph: {
+    title: "MediTrace",
+    description: "Record doses. Understand the trend.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "MediTrace medication trend dashboard" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MediTrace",
+    description: "Record doses. Understand the trend.",
+    images: ["/og.png"],
   },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f7f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#101613" },
   ],
 };
 
@@ -33,24 +39,8 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="en">
       <head />
       <body className="min-h-screen text-foreground bg-background font-sans antialiased">
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
-            <Navbar />
-            <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
-              {children}
-            </main>
-            <footer className="w-full flex items-center justify-center py-3">
-              <a
-                className="flex items-center gap-1 text-current no-underline"
-                href="https://heroui.com?utm_source=next-app-template"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <span className="text-muted">Powered by</span>
-                <p className="text-accent">HeroUI</p>
-              </a>
-            </footer>
-          </div>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "system", enableSystem: true }}>
+          {children}
         </Providers>
       </body>
     </html>

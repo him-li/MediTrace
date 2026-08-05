@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/node_modules/
 /.pnp
 .pnp.js
 
@@ -36,5 +37,5 @@ next-env.d.ts
 
 pnpm-lock.yaml
 yarn.lock
-package-lock.json
+# npm lockfile is intentionally committed for reproducible builds
 bun.lockb
