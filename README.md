@@ -1,6 +1,14 @@
 # MediTrace
 
-一款使用 SwiftUI 编写的 iOS 药物服用记录与半衰期趋势估算应用。
+MediTrace 是一个用于记录药物服用时间与估算体内剩余量的多平台项目。
+
+## 项目结构
+
+```text
+MediTrace/
+├── ios/    SwiftUI iOS App
+└── web/    Next.js App Router + TypeScript + HeroUI Web App
+```
 
 ## 功能
 
@@ -26,8 +34,18 @@ remaining = dose × 0.5 ^ (t / halfLife)
 
 界面支持简体中文、繁体中文、英文、希伯来文和阿拉伯文，并跟随设备语言。希伯来文与阿拉伯文会自动采用从右到左布局。
 
-## 运行
+## 运行 iOS App
 
-使用 Xcode 26 或更新版本打开 `MediTrace.xcodeproj`，选择 iOS 26+ 模拟器或设备运行。首次添加提醒时，系统会请求闹钟权限。
+使用 Xcode 26 或更新版本打开 `ios/MediTrace.xcodeproj`，选择 iOS 26+ 模拟器或设备运行。首次添加提醒时，系统会请求闹钟权限。
+
+## 运行 Web App
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Web 工程使用 Next.js App Router、React、TypeScript、HeroUI v3 和 Tailwind CSS 4。
 
 > 本应用只用于记录和趋势估算，不提供医疗建议，也不能用于调整用药。请严格遵照医生或药师的指导。
