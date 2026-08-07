@@ -47,7 +47,7 @@ struct ContentView: View {
             .sheet(isPresented: $showingAddMedication) {
                 AddMedicationView()
             }
-            .fullScreenCover(item: $requiredDoseMedication) { medication in
+            .requiredItemCover(item: $requiredDoseMedication) { medication in
                 AddDoseView(medication: medication, isRequired: true) {
                     requiredDoseMedication = nil
                 }

@@ -22,7 +22,7 @@ struct AddMedicationView: View {
                     TextField("名称", text: $name)
                     HStack {
                         TextField("单次剂量", value: $dose, format: .number)
-                            .keyboardType(.decimalPad)
+                            .decimalInputKeyboard()
                         TextField("单位", text: $unit)
                             .multilineTextAlignment(.trailing)
                             .frame(maxWidth: 70)
@@ -33,7 +33,7 @@ struct AddMedicationView: View {
                         Text("半衰期")
                         Spacer()
                         TextField("小时", value: $halfLife, format: .number)
-                            .keyboardType(.decimalPad)
+                            .decimalInputKeyboard()
                             .multilineTextAlignment(.trailing)
                         Text("小时").foregroundStyle(.secondary)
                     }
@@ -41,7 +41,7 @@ struct AddMedicationView: View {
                         Text("达到峰值时间")
                         Spacer()
                         TextField("小时", value: $timeToPeak, format: .number)
-                            .keyboardType(.decimalPad)
+                            .decimalInputKeyboard()
                             .multilineTextAlignment(.trailing)
                         Text("小时").foregroundStyle(.secondary)
                     }
@@ -52,7 +52,7 @@ struct AddMedicationView: View {
                 }
             }
             .navigationTitle("添加药物")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("取消") { dismiss() }

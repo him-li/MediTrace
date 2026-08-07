@@ -155,14 +155,14 @@ struct AddDoseView: View {
                 Section("本次服用") {
                     HStack {
                         TextField("剂量", value: $amount, format: .number)
-                            .keyboardType(.decimalPad)
+                            .decimalInputKeyboard()
                         Text(medication.unit).foregroundStyle(.secondary)
                     }
                     DatePicker("服用时间", selection: $date, in: ...Date.now)
                 }
             }
             .navigationTitle("记录服用")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 if !isRequired {
                     ToolbarItem(placement: .cancellationAction) {

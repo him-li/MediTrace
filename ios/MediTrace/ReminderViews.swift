@@ -35,7 +35,7 @@ struct ReminderListView: View {
                 }
             }
             .navigationTitle("用药提醒")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("完成") { dismiss() }
@@ -106,7 +106,7 @@ private struct AddReminderView: View {
                 }
             }
             .navigationTitle("添加提醒")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("取消") { dismiss() }
@@ -125,7 +125,7 @@ private struct AddReminderView: View {
             Text(title)
             Spacer()
             TextField("数值", value: value, format: .number)
-                .keyboardType(.decimalPad)
+                .decimalInputKeyboard()
                 .multilineTextAlignment(.trailing)
             Text(suffix).foregroundStyle(.secondary)
         }

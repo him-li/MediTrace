@@ -55,3 +55,5 @@
 "忽略并延长" = "Ignore and Snooze";
 "服药提醒" = "Medication Reminder";
 "停止并记录" = "Stop and Record";
+"该记录新的服药剂量了。" = "It is time to record a new medication dose.";
+"没有系统通知权限。请在“系统设置”中允许 MediTrace 发送通知。" = "Notification access is denied. Allow MediTrace to send notifications in System Settings.";

@@ -6,7 +6,7 @@ MediTrace 是一个用于记录药物服用时间与估算体内剩余量的多�
 
 ```text
 MediTrace/
-├── ios/    SwiftUI iOS App
+├── ios/    SwiftUI iOS + macOS App
 └── web/    Next.js App Router + TypeScript + HeroUI Web App
 ```
 
@@ -34,9 +34,14 @@ remaining = dose × 0.5 ^ (t / halfLife)
 
 界面支持简体中文、繁体中文、英文、希伯来文和阿拉伯文，并跟随设备语言。希伯来文与阿拉伯文会自动采用从右到左布局。
 
-## 运行 iOS App
+## 运行 iOS / macOS App
 
-使用 Xcode 26 或更新版本打开 `ios/MediTrace.xcodeproj`，选择 iOS 26+ 模拟器或设备运行。首次添加提醒时，系统会请求闹钟权限。
+使用 Xcode 27 或更新版本打开 `ios/MediTrace.xcodeproj`：
+
+- iOS：选择 iOS 26+ 模拟器或设备。提醒使用 AlarmKit。
+- macOS：选择 `My Mac`。提醒使用 macOS 通知中心。
+
+首次添加提醒时，系统会请求相应权限。macOS 没有与 iOS AlarmKit 等价的公开系统闹钟 API，因此 Mac 版使用带声音和操作按钮的系统通知；“忽略并延长”会重新安排通知，“停止并记录”会激活 App 并要求录入新剂量。
 
 ## 运行 Web App
 
