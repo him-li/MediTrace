@@ -11,37 +11,37 @@ struct ReminderListView: View {
             List {
                 if store.reminders(for: medication).isEmpty {
                     ContentUnavailableView(
-                        "暂无提醒",
+                        "No Reminders",
                         systemImage: "alarm",
-                        description: Text("可按固定时长或估算剩余量创建系统闹钟。")
+                        description: Text("Create a system alarm based on elapsed time or estimated remaining amount.")
                     )
                 } else {
                     ForEach(store.reminders(for: medication)) { reminder in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(reminderTitle(reminder)).font(.headline)
                             if let date = reminder.nextFireDate {
-                                Text("下次提醒：\(date.formatted(date: .abbreviated, time: .shortened))")
+                                Text("Next reminder: \(date.formatted(date: .abbreviated, time: .shortened))")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
-                            Text("延长 \(reminder.snoozeMinutes.formatted()) 分钟")
+                            Text("Snooze for \(reminder.snoozeMinutes.formatted()) min")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
                         .swipeActions {
-                            Button("删除", role: .destructive) { store.deleteReminder(reminder) }
+                            Button("Delete", role: .destructive) { store.deleteReminder(reminder) }
                         }
                     }
                 }
             }
-            .navigationTitle("用药提醒")
+            .navigationTitle("Medication Reminders")
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("完成") { dismiss() }
+                    Button("Done") { dismiss() }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("添加提醒", systemImage: "plus") { showingAdd = true }
+                    Button("Add Reminder", systemImage: "plus") { showingAdd = true }
                 }
             }
             .sheet(isPresented: $showingAdd) {
@@ -53,9 +53,9 @@ struct ReminderListView: View {
     private func reminderTitle(_ reminder: MedicationReminder) -> String {
         switch reminder.trigger {
         case .afterDuration(let hours):
-            String(localized: "服药后 \(hours.formatted()) 小时")
+            String(localized: "\(hours.formatted()) hours after dose")
         case .belowAmount(let amount):
-            String(localized: "低于 \(amount.formatted()) \(medication.unit)")
+            String(localized: "Below \(amount.formatted()) \(medication.unit)")
         }
     }
 }
@@ -81,38 +81,38 @@ private struct AddReminderView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("触发条件") {
-                    Picker("提醒方式", selection: $mode) {
-                        Text("固定时长").tag(Mode.duration)
-                        Text("低于指定剩余量").tag(Mode.threshold)
+                Section("Trigger") {
+                    Picker("Reminder type", selection: $mode) {
+                        Text("Elapsed time").tag(Mode.duration)
+                        Text("Below amount").tag(Mode.threshold)
                     }
                     .pickerStyle(.segmented)
 
                     if mode == .duration {
-                        valueRow("服药后", value: $durationHours, suffix: String(localized: "小时"))
+                        valueRow("After dose", value: $durationHours, suffix: String(localized: "hours"))
                     } else {
-                        valueRow("低于", value: $threshold, suffix: medication.unit)
+                        valueRow("Below", value: $threshold, suffix: medication.unit)
                     }
                 }
 
                 Section {
-                    valueRow("延长时间", value: $snoozeMinutes, suffix: String(localized: "分钟"))
+                    valueRow("Snooze duration", value: $snoozeMinutes, suffix: String(localized: "minutes"))
                 } footer: {
-                    Text("闹钟响起时可以选择延长。选择停止后，App 会要求记录新的服药剂量。")
+                    Text("When the alarm rings, you can snooze it. After stopping it, the app requires you to record a new dose.")
                 }
 
                 if let errorMessage {
                     Section { Text(errorMessage).foregroundStyle(.red) }
                 }
             }
-            .navigationTitle("添加提醒")
+            .navigationTitle("Add Reminder")
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") { Task { await save() } }
+                    Button("Save") { Task { await save() } }
                         .disabled(!isValid || isSaving)
                 }
             }
@@ -124,7 +124,7 @@ private struct AddReminderView: View {
         HStack {
             Text(title)
             Spacer()
-            TextField("数值", value: value, format: .number)
+            TextField("Value", value: value, format: .number)
                 .decimalInputKeyboard()
                 .multilineTextAlignment(.trailing)
             Text(suffix).foregroundStyle(.secondary)

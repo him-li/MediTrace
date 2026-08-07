@@ -18,47 +18,47 @@ struct AddMedicationView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("药物") {
-                    TextField("名称", text: $name)
+                Section("Medication") {
+                    TextField("Name", text: $name)
                     HStack {
-                        TextField("单次剂量", value: $dose, format: .number)
+                        TextField("Default dose", value: $dose, format: .number)
                             .decimalInputKeyboard()
-                        TextField("单位", text: $unit)
+                        TextField("Unit", text: $unit)
                             .multilineTextAlignment(.trailing)
                             .frame(maxWidth: 70)
                     }
                 }
                 Section {
                     HStack {
-                        Text("半衰期")
+                        Text("Half-life")
                         Spacer()
-                        TextField("小时", value: $halfLife, format: .number)
+                        TextField("hours", value: $halfLife, format: .number)
                             .decimalInputKeyboard()
                             .multilineTextAlignment(.trailing)
-                        Text("小时").foregroundStyle(.secondary)
+                        Text("hours").foregroundStyle(.secondary)
                     }
                     HStack {
-                        Text("达到峰值时间")
+                        Text("Time to peak")
                         Spacer()
-                        TextField("小时", value: $timeToPeak, format: .number)
+                        TextField("hours", value: $timeToPeak, format: .number)
                             .decimalInputKeyboard()
                             .multilineTextAlignment(.trailing)
-                        Text("小时").foregroundStyle(.secondary)
+                        Text("hours").foregroundStyle(.secondary)
                     }
                 } header: {
-                    Text("药代参数")
+                    Text("Pharmacokinetic parameters")
                 } footer: {
-                    Text("达到峰值时间指服药后达到最高估算水平所需的时间。请从药品说明书或医生处确认参数。")
+                    Text("Time to peak is the time after a dose until the estimated level is highest. Confirm these parameters from the medication leaflet or your clinician.")
                 }
             }
-            .navigationTitle("添加药物")
+            .navigationTitle("Add Medication")
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button("Save") {
                         store.addMedication(
                             name: name,
                             dose: dose,

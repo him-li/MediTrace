@@ -11,11 +11,11 @@ struct ContentView: View {
             Group {
                 if store.medications.isEmpty {
                     ContentUnavailableView {
-                        Label("还没有药物", systemImage: "pills")
+                        Label("No medications yet", systemImage: "pills")
                     } description: {
-                        Text("添加药物后即可记录服用时间并查看半衰期趋势。")
+                        Text("Add a medication to record doses and view its half-life trend.")
                     } actions: {
-                        Button("添加药物") { showingAddMedication = true }
+                        Button("Add Medication") { showingAddMedication = true }
                             .buttonStyle(.borderedProminent)
                     }
                 } else {
@@ -30,7 +30,7 @@ struct ContentView: View {
                                 offsets.map { store.medications[$0] }.forEach(store.deleteMedication)
                             }
                         } footer: {
-                            Text("曲线为数学估算，不代表真实血药浓度或医疗建议。")
+                            Text("The chart is a mathematical estimate, not a measured blood level or medical advice.")
                         }
                     }
                 }
@@ -41,7 +41,7 @@ struct ContentView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("添加药物", systemImage: "plus") { showingAddMedication = true }
+                    Button("Add Medication", systemImage: "plus") { showingAddMedication = true }
                 }
             }
             .sheet(isPresented: $showingAddMedication) {
@@ -82,7 +82,7 @@ private struct MedicationRow: View {
                 .background(.tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
             VStack(alignment: .leading, spacing: 3) {
                 Text(medication.name).font(.headline)
-                Text("常用剂量 \(medication.defaultDose.formatted()) \(medication.unit) · 半衰期 \(medication.halfLifeHours.formatted()) 小时 · 峰值 \(medication.timeToPeakHours.formatted()) 小时")
+                Text("Dose \(medication.defaultDose.formatted()) \(medication.unit) · Half-life \(medication.halfLifeHours.formatted()) h · Peak \(medication.timeToPeakHours.formatted()) h")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

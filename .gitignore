@@ -31,6 +31,10 @@ playground.xcworkspace
 
 .build/
 
+# Local Xcode build products and module caches
+.derivedData/
+DerivedData/
+
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However

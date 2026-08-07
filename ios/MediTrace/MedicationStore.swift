@@ -172,7 +172,7 @@ final class MedicationStore: ObservableObject {
             ))
             try data.write(to: fileURL, options: .atomic)
         } catch {
-            assertionFailure("保存数据失败：\(error.localizedDescription)")
+            assertionFailure("Failed to save data: \(error.localizedDescription)")
         }
     }
 
@@ -187,6 +187,6 @@ enum ReminderError: LocalizedError {
     case noPredictedDate
 
     var errorDescription: String? {
-        String(localized: "无法根据当前记录预测提醒时间。请先添加一笔服药记录。")
+        String(localized: "A reminder time cannot be predicted from the current records. Record a dose first.")
     }
 }

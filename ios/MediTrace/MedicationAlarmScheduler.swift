@@ -10,10 +10,10 @@ struct MedicationAlarmMetadata: AlarmMetadata {
 }
 
 struct RecordDoseIntent: LiveActivityIntent {
-    static var title: LocalizedStringResource = "记录新剂量"
+    static var title: LocalizedStringResource = "Record New Dose"
     static var openAppWhenRun: Bool = true
 
-    @Parameter(title: "药物 ID")
+    @Parameter(title: "Medication ID")
     var medicationID: String
 
     init() {}
@@ -53,14 +53,14 @@ enum MedicationAlarmScheduler {
         guard authorization == .authorized else { throw AlarmSchedulingError.notAuthorized }
 
         let repeatButton = AlarmButton(
-            text: "忽略并延长",
+            text: "Ignore and Snooze",
             textColor: .orange,
             systemImageName: "clock.arrow.circlepath"
         )
         let alert = AlarmPresentation.Alert(
-            title: "服药提醒",
+            title: "Medication Reminder",
             stopButton: AlarmButton(
-                text: "停止并记录",
+                text: "Stop and Record",
                 textColor: .red,
                 systemImageName: "stop.circle"
             ),
@@ -86,8 +86,8 @@ enum MedicationAlarmScheduler {
         guard granted else { throw AlarmSchedulingError.notAuthorized }
 
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "服药提醒")
-        content.body = String(localized: "该记录新的服药剂量了。")
+        content.title = String(localized: "Medication Reminder")
+        content.body = String(localized: "It is time to record a new medication dose.")
         content.sound = .default
         content.categoryIdentifier = categoryID
         content.userInfo = [
@@ -122,11 +122,11 @@ final class MacAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationC
         center.delegate = self
         let snooze = UNNotificationAction(
             identifier: MedicationAlarmScheduler.snoozeActionID,
-            title: String(localized: "忽略并延长")
+            title: String(localized: "Ignore and Snooze")
         )
         let record = UNNotificationAction(
             identifier: MedicationAlarmScheduler.recordActionID,
-            title: String(localized: "停止并记录"),
+            title: String(localized: "Stop and Record"),
             options: [.foreground]
         )
         center.setNotificationCategories([
@@ -185,9 +185,9 @@ enum AlarmSchedulingError: LocalizedError {
 
     var errorDescription: String? {
         #if os(macOS)
-        String(localized: "没有系统通知权限。请在“系统设置”中允许 MediTrace 发送通知。")
+        String(localized: "Notification access is denied. Allow MediTrace to send notifications in System Settings.")
         #else
-        String(localized: "没有系统闹钟权限。请在“设置”中允许 MediTrace 使用闹钟。")
+        String(localized: "Alarm access is denied. Allow MediTrace to use alarms in Settings.")
         #endif
     }
 }

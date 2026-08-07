@@ -21,7 +21,7 @@ struct MedicationDetailView: View {
         ScrollView {
             VStack(spacing: 18) {
                 VStack(spacing: 5) {
-                    Text("当前估算剩余量")
+                    Text("Current estimated amount")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     Text("\(currentAmount.formatted(.number.precision(.fractionLength(0...2)))) \(medication.unit)")
@@ -33,11 +33,11 @@ struct MedicationDetailView: View {
                 .background(.tint.opacity(0.1), in: RoundedRectangle(cornerRadius: 18))
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("估算趋势").font(.headline)
+                    Text("Estimated trend").font(.headline)
                     Chart(points) { point in
                         AreaMark(
-                            x: .value("时间", point.date),
-                            y: .value("剩余量", point.amount)
+                            x: .value("Time", point.date),
+                            y: .value("Remaining amount", point.amount)
                         )
                         .foregroundStyle(.linearGradient(
                             colors: [.accentColor.opacity(0.5), .accentColor.opacity(0.05)],
@@ -45,13 +45,13 @@ struct MedicationDetailView: View {
                             endPoint: .bottom
                         ))
                         LineMark(
-                            x: .value("时间", point.date),
-                            y: .value("剩余量", point.amount)
+                            x: .value("Time", point.date),
+                            y: .value("Remaining amount", point.amount)
                         )
                         .foregroundStyle(.tint)
                         .interpolationMethod(.linear)
 
-                        RuleMark(x: .value("现在", now))
+                        RuleMark(x: .value("Now", now))
                             .foregroundStyle(.secondary)
                             .lineStyle(StrokeStyle(dash: [4]))
                     }
@@ -62,15 +62,15 @@ struct MedicationDetailView: View {
                         }
                     }
                     .frame(height: 240)
-                    Text("约 \(medication.timeToPeakHours.formatted()) 小时达到峰值，之后按 \(medication.halfLifeHours.formatted()) 小时半衰期计算；每次补服都会叠加。")
+                    Text("Peaks in about \(medication.timeToPeakHours.formatted()) hours, then decays with a \(medication.halfLifeHours.formatted())-hour half-life. Every dose is added to the estimate.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("服用记录").font(.headline)
+                    Text("Dose history").font(.headline)
                     if medicationDoses.isEmpty {
-                        Text("暂无记录")
+                        Text("No doses recorded")
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, minHeight: 70)
                     } else {
@@ -100,8 +100,8 @@ struct MedicationDetailView: View {
         .navigationTitle(medication.name)
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button("用药提醒", systemImage: "alarm") { showingReminders = true }
-                Button("记录服用", systemImage: "plus.circle.fill") { showingDoseSheet = true }
+                Button("Medication Reminders", systemImage: "alarm") { showingReminders = true }
+                Button("Record Dose", systemImage: "plus.circle.fill") { showingDoseSheet = true }
             }
         }
         .safeAreaInset(edge: .bottom) {
@@ -109,7 +109,7 @@ struct MedicationDetailView: View {
                 store.addDose(for: medication, amount: medication.defaultDose, at: .now)
                 now = .now
             } label: {
-                Label("现在服用 \(medication.defaultDose.formatted()) \(medication.unit)", systemImage: "pills.fill")
+                Label("Take \(medication.defaultDose.formatted()) \(medication.unit) now", systemImage: "pills.fill")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
             }
@@ -152,25 +152,25 @@ struct AddDoseView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("本次服用") {
+                Section("Dose") {
                     HStack {
-                        TextField("剂量", value: $amount, format: .number)
+                        TextField("Amount", value: $amount, format: .number)
                             .decimalInputKeyboard()
                         Text(medication.unit).foregroundStyle(.secondary)
                     }
-                    DatePicker("服用时间", selection: $date, in: ...Date.now)
+                    DatePicker("Time taken", selection: $date, in: ...Date.now)
                 }
             }
-            .navigationTitle("记录服用")
+            .navigationTitle("Record Dose")
             .inlineNavigationTitle()
             .toolbar {
                 if !isRequired {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("取消") { dismiss() }
+                        Button("Cancel") { dismiss() }
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button("Save") {
                         store.addDose(for: medication, amount: amount, at: date)
                         onSave()
                         dismiss()

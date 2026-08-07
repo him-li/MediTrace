@@ -92,7 +92,7 @@
 			};
 			buildConfigurationList = A1000000000000000000001F;
 			compatibilityVersion = "Xcode 16.0";
-			developmentRegion = zh_Hans;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (Base, "zh-Hans", "zh-Hant", en, he, ar);
 			mainGroup = A10000000000000000000005;
